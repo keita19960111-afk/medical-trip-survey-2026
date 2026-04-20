@@ -1,0 +1,778 @@
+<!-- GAS_WEBAPP_URL を埋めること: const GAS_URL = 'https://script.google.com/macros/s/AKfycbw4EvZtSZ_b33k74rZ6ov63s_4Y-_o74gr6P1eNlIAzgBwq_2HY7hhAEupkmRHq0R4Q/exec'; を検索して差替 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026年度 医局旅行 アンケート | 岩手医科大学泌尿器科学講座</title>
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ===== Layout ===== */
+    .page-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 16px 48px;
+    }
+
+    /* ===== Header ===== */
+    header {
+      background: #1b2a4a;
+      color: #ffffff;
+      padding: 32px 24px 28px;
+      margin-bottom: 32px;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    header .subtitle {
+      font-size: 0.95rem;
+      color: #a8c0e0;
+      margin-bottom: 20px;
+    }
+    header .description {
+      font-size: 0.9rem;
+      color: #d0dff0;
+      margin-bottom: 12px;
+      line-height: 1.65;
+    }
+    header .notice {
+      font-size: 0.8rem;
+      color: #8ba8c8;
+      border-top: 1px solid #2e4a72;
+      padding-top: 12px;
+      line-height: 1.6;
+    }
+
+    /* ===== Section Heading ===== */
+    .section-heading {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1b2a4a;
+      border-left: 4px solid #1b2a4a;
+      padding-left: 10px;
+      margin: 32px 0 16px;
+    }
+    .section-heading.optional {
+      border-left-color: #7a90a8;
+      color: #3a4a5a;
+    }
+
+    /* ===== Form Card ===== */
+    .form-card {
+      background: #ffffff;
+      border: 1px solid #dce3ec;
+      border-radius: 8px;
+      padding: 24px 20px;
+      margin-bottom: 20px;
+    }
+
+    /* ===== Question Label ===== */
+    .question-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.97rem;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-bottom: 14px;
+    }
+    .badge-required {
+      display: inline-block;
+      background: #cc2222;
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 3px;
+      white-space: nowrap;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+    .badge-optional {
+      display: inline-block;
+      background: #7a90a8;
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 3px;
+      white-space: nowrap;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ===== Radio Group ===== */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 48px;
+      padding: 8px 14px;
+      border: 1px solid #dce3ec;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+      user-select: none;
+    }
+    .radio-label:hover {
+      background: #f4f7fb;
+      border-color: #1b2a4a;
+    }
+    .radio-label input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #1b2a4a;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .radio-label span {
+      font-size: 0.93rem;
+      color: #1a1a2e;
+    }
+
+    /* ===== Budget hint ===== */
+    .budget-hint {
+      font-size: 0.8rem;
+      color: #5a6a7a;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      background: #f4f7fb;
+      border-radius: 4px;
+    }
+
+    /* ===== Text inputs ===== */
+    .text-input, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #c8d3de;
+      border-radius: 6px;
+      font-size: 0.93rem;
+      font-family: inherit;
+      color: #1a1a2e;
+      background: #fafbfc;
+      transition: border-color 0.15s;
+    }
+    .text-input:focus, textarea:focus {
+      outline: none;
+      border-color: #1b2a4a;
+      background: #ffffff;
+    }
+    textarea {
+      height: 80px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+    .char-count {
+      text-align: right;
+      font-size: 0.75rem;
+      color: #8a9aaa;
+      margin-top: 4px;
+    }
+    .char-count.over {
+      color: #cc2222;
+      font-weight: 700;
+    }
+
+    /* ===== Error ===== */
+    .field-error {
+      display: none;
+      color: #cc2222;
+      font-size: 0.82rem;
+      margin-top: 6px;
+    }
+    .field-error.visible {
+      display: block;
+    }
+    .input-error .radio-label,
+    .input-error .text-input,
+    .input-error textarea {
+      border-color: #cc2222;
+    }
+
+    /* ===== Honeypot (hidden) ===== */
+    .hp-field {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      opacity: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    /* ===== Submit ===== */
+    .submit-wrap {
+      text-align: center;
+      margin-top: 32px;
+    }
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #1b2a4a;
+      color: #ffffff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 16px 48px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      min-width: 220px;
+      transition: background 0.15s, opacity 0.15s;
+      letter-spacing: 0.04em;
+    }
+    .btn-submit:hover:not(:disabled) {
+      background: #26407a;
+    }
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    /* Spinner */
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .btn-submit.sending .spinner {
+      display: block;
+    }
+
+    /* ===== Thank-you ===== */
+    .thankyou-wrap {
+      text-align: center;
+      padding: 48px 16px;
+    }
+    .thankyou-wrap h2 {
+      font-size: 1.3rem;
+      color: #1b2a4a;
+      margin-bottom: 16px;
+    }
+    .thankyou-wrap p {
+      font-size: 0.97rem;
+      color: #3a4a5a;
+      margin-bottom: 12px;
+      line-height: 1.7;
+    }
+    .thankyou-uuid {
+      display: inline-block;
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: #8a9aaa;
+      font-family: monospace;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 480px) {
+      header {
+        padding: 24px 16px 20px;
+      }
+      header h1 {
+        font-size: 1.25rem;
+      }
+      .form-card {
+        padding: 18px 14px;
+      }
+      .radio-label {
+        padding: 8px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header>
+    <h1>2026年度 医局旅行 アンケート</h1>
+    <p class="subtitle">岩手医科大学泌尿器科学講座</p>
+    <p class="description">
+      コロナ禍で中断していた医局旅行の再開について、皆様のご意見を伺います。
+      2027年2月・1泊2日での開催を検討中（学会の無い月）。
+    </p>
+    <p class="notice">
+      本アンケートは医局内限定です。回答は Google Sheets に記録されます。お名前・所属は任意です。
+    </p>
+  </header>
+
+  <main id="main-content">
+    <form id="survey-form" novalidate autocomplete="off">
+
+      <!-- Honeypot: botが自動で埋めるフィールド。人間は触らない -->
+      <div class="hp-field" aria-hidden="true">
+        <label for="website">ウェブサイト（入力しないでください）</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <!-- hidden: uuid -->
+      <input type="hidden" id="uuid" name="uuid">
+
+      <!-- ===== 必須項目 ===== -->
+      <p class="section-heading">必須項目</p>
+
+      <!-- Q1: 実施すべきか -->
+      <div class="form-card" id="field-consent">
+        <div class="question-label">
+          <span class="badge-required">必須</span>
+          <span>医局旅行を実施すべきだと思いますか？</span>
+        </div>
+        <div class="radio-group" role="radiogroup" aria-labelledby="label-consent">
+          <label class="radio-label">
+            <input type="radio" name="consent" value="実施希望">
+            <span>実施希望</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="consent" value="実施不要">
+            <span>実施不要</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="consent" value="どちらでもよい">
+            <span>どちらでもよい</span>
+          </label>
+        </div>
+        <p class="field-error" id="error-consent">いずれかを選択してください。</p>
+      </div>
+
+      <!-- Q2: 参加可否 -->
+      <div class="form-card" id="field-attend">
+        <div class="question-label">
+          <span class="badge-required">必須</span>
+          <span>2027年2月・1泊2日での参加可否</span>
+        </div>
+        <div class="radio-group" role="radiogroup" aria-labelledby="label-attend">
+          <label class="radio-label">
+            <input type="radio" name="attend" value="参加できる">
+            <span>参加できる</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="attend" value="参加できない">
+            <span>参加できない</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="attend" value="日程次第">
+            <span>日程次第</span>
+          </label>
+        </div>
+        <p class="field-error" id="error-attend">いずれかを選択してください。</p>
+      </div>
+
+      <!-- Q3: 希望予算 -->
+      <div class="form-card" id="field-budget">
+        <div class="question-label">
+          <span class="badge-required">必須</span>
+          <span>希望予算（1人あたり・交通費・宿泊・懇親会費込みの目安）</span>
+        </div>
+        <p class="budget-hint">過去実績: 函館時 ¥50,000 / 仙台時 ¥35,000</p>
+        <div class="radio-group" role="radiogroup" aria-labelledby="label-budget">
+          <label class="radio-label">
+            <input type="radio" name="budget" value="20000">
+            <span>¥20,000</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="budget" value="30000">
+            <span>¥30,000</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="budget" value="40000">
+            <span>¥40,000</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="budget" value="50000">
+            <span>¥50,000</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="budget" value="60000">
+            <span>¥60,000</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="budget" value="70000+">
+            <span>¥70,000以上</span>
+          </label>
+        </div>
+        <p class="field-error" id="error-budget">いずれかを選択してください。</p>
+      </div>
+
+      <!-- Q4: 希望行き先 -->
+      <div class="form-card" id="field-destination">
+        <div class="question-label">
+          <span class="badge-required">必須</span>
+          <span>希望行き先（自由記述、500字以内）</span>
+        </div>
+        <textarea id="destination" name="destination" placeholder="例: 北海道（札幌・小樽）、東北（秋田・山形）など" maxlength="500" rows="3"></textarea>
+        <p class="char-count" id="count-destination">0 / 500</p>
+        <p class="field-error" id="error-destination">行き先を入力してください（500字以内）。</p>
+      </div>
+
+      <!-- ===== 任意項目 ===== -->
+      <p class="section-heading optional">任意項目（回答は任意です）</p>
+
+      <!-- Q5: 氏名 -->
+      <div class="form-card" id="field-name">
+        <div class="question-label">
+          <span class="badge-optional">任意</span>
+          <span>お名前</span>
+        </div>
+        <input class="text-input" type="text" id="name" name="name" placeholder="例: 岩手 太郎" maxlength="100">
+      </div>
+
+      <!-- Q6: 所属 -->
+      <div class="form-card" id="field-affiliation">
+        <div class="question-label">
+          <span class="badge-optional">任意</span>
+          <span>所属（関連病院名）</span>
+        </div>
+        <input class="text-input" type="text" id="affiliation" name="affiliation" placeholder="例: ○○病院" maxlength="100">
+      </div>
+
+      <!-- Q7: 家族同伴 -->
+      <div class="form-card" id="field-family">
+        <div class="question-label">
+          <span class="badge-optional">任意</span>
+          <span>家族同伴を希望しますか？</span>
+        </div>
+        <div class="radio-group" role="radiogroup">
+          <label class="radio-label">
+            <input type="radio" name="family" value="有">
+            <span>有</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="family" value="無">
+            <span>無</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="family" value="未定">
+            <span>未定</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Q8: 食事制限・アレルギー -->
+      <div class="form-card" id="field-meal-restriction">
+        <div class="question-label">
+          <span class="badge-optional">任意</span>
+          <span>食事制限・アレルギーがあればご記入ください</span>
+        </div>
+        <textarea id="meal_restriction" name="meal_restriction" placeholder="例: 甲殻類アレルギー、宗教上の制限など" rows="2" maxlength="1000"></textarea>
+      </div>
+
+      <!-- Q9: やりたいこと・行きたい場所 -->
+      <div class="form-card" id="field-wishlist">
+        <div class="question-label">
+          <span class="badge-optional">任意</span>
+          <span>やりたいこと・行きたい場所</span>
+        </div>
+        <textarea id="wishlist" name="wishlist" placeholder="例: 温泉、観光地巡り、グルメ探索など" rows="3" maxlength="1000"></textarea>
+      </div>
+
+      <!-- Q10: その他要望・懸念 -->
+      <div class="form-card" id="field-other">
+        <div class="question-label">
+          <span class="badge-optional">任意</span>
+          <span>その他要望・懸念事項</span>
+        </div>
+        <textarea id="other" name="other" placeholder="自由にご記入ください" rows="3" maxlength="1000"></textarea>
+      </div>
+
+      <!-- ===== 送信ボタン ===== -->
+      <div class="submit-wrap">
+        <button type="submit" id="btn-submit" class="btn-submit">
+          <span class="spinner" id="spinner"></span>
+          <span id="btn-text">回答を送信する</span>
+        </button>
+      </div>
+
+    </form>
+  </main>
+
+</div><!-- .page-wrap -->
+
+<script>
+(function () {
+  'use strict';
+
+  /* ===== 送信先 GAS WebApp URL ===== */
+  /* ★デプロイ後にここを実際の URL に差替 */
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbw4EvZtSZ_b33k74rZ6ov63s_4Y-_o74gr6P1eNlIAzgBwq_2HY7hhAEupkmRHq0R4Q/exec';
+
+  /* ===== ページロード時刻を記録（3秒ルール用） ===== */
+  window.__formLoadedAt = Date.now();
+
+  /* ===== UUID 生成（1回のみ） ===== */
+  var uuidInput = document.getElementById('uuid');
+  uuidInput.value = crypto.randomUUID();
+
+  /* ===== localStorage から下書き復元 ===== */
+  var DRAFT_KEY = 'trip2026_draft';
+  var DONE_KEY  = 'trip2026_done';
+
+  function restoreDraft() {
+    if (localStorage.getItem(DONE_KEY)) {
+      /* 送信完了済みなら下書きクリア */
+      localStorage.removeItem(DRAFT_KEY);
+      localStorage.removeItem(DONE_KEY);
+      return;
+    }
+    var raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return;
+    try {
+      var data = JSON.parse(raw);
+      Object.keys(data).forEach(function (k) {
+        var els = document.querySelectorAll('[name="' + k + '"]');
+        if (!els.length) return;
+        if (els[0].type === 'radio') {
+          els.forEach(function (el) {
+            if (el.value === data[k]) el.checked = true;
+          });
+        } else if (els[0].tagName === 'TEXTAREA' || els[0].type === 'text') {
+          els[0].value = data[k];
+          /* textarea の文字数更新 */
+          var counter = document.getElementById('count-' + k);
+          if (counter) {
+            counter.textContent = data[k].length + ' / 500';
+          }
+        }
+      });
+    } catch (e) { /* 破損時は無視 */ }
+  }
+  restoreDraft();
+
+  /* ===== 下書き自動保存 ===== */
+  function collectFormData() {
+    var form = document.getElementById('survey-form');
+    var out = {};
+    var radios = {};
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (!el.name || el.name === 'uuid' || el.name === 'website') return;
+      if (el.type === 'radio') {
+        if (el.checked) radios[el.name] = el.value;
+      } else {
+        out[el.name] = el.value;
+      }
+    });
+    Object.assign(out, radios);
+    return out;
+  }
+
+  function saveDraft() {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(collectFormData()));
+    } catch (e) { /* quota over 等は無視 */ }
+  }
+
+  document.getElementById('survey-form').addEventListener('input', saveDraft);
+
+  /* ===== destination 文字数カウント ===== */
+  var destTA    = document.getElementById('destination');
+  var destCount = document.getElementById('count-destination');
+  destTA.addEventListener('input', function () {
+    var len = destTA.value.length;
+    destCount.textContent = len + ' / 500';
+    destCount.classList.toggle('over', len > 500);
+  });
+
+  /* ===== バリデーション ===== */
+  function getRadioValue(name) {
+    var checked = document.querySelector('[name="' + name + '"]:checked');
+    return checked ? checked.value : '';
+  }
+
+  function setError(fieldId, errorId, show) {
+    var field = document.getElementById(fieldId);
+    var err   = document.getElementById(errorId);
+    if (show) {
+      field.classList.add('input-error');
+      err.classList.add('visible');
+    } else {
+      field.classList.remove('input-error');
+      err.classList.remove('visible');
+    }
+    return show;
+  }
+
+  function validate() {
+    var hasError = false;
+
+    /* Q1 */
+    if (!getRadioValue('consent')) {
+      setError('field-consent', 'error-consent', true);
+      hasError = true;
+    } else {
+      setError('field-consent', 'error-consent', false);
+    }
+
+    /* Q2 */
+    if (!getRadioValue('attend')) {
+      setError('field-attend', 'error-attend', true);
+      hasError = true;
+    } else {
+      setError('field-attend', 'error-attend', false);
+    }
+
+    /* Q3 */
+    if (!getRadioValue('budget')) {
+      setError('field-budget', 'error-budget', true);
+      hasError = true;
+    } else {
+      setError('field-budget', 'error-budget', false);
+    }
+
+    /* Q4 destination: 空 or 500字超 */
+    var dest = destTA.value.trim().replace(/\s+/g, ' ');
+    if (!dest || dest.length > 500) {
+      setError('field-destination', 'error-destination', true);
+      hasError = true;
+    } else {
+      setError('field-destination', 'error-destination', false);
+    }
+
+    return !hasError;
+  }
+
+  /* ===== 送信処理 ===== */
+  document.getElementById('survey-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    /* honeypot チェック: 値があれば bot とみなして silent ignore */
+    var hp = document.getElementById('website').value;
+    if (hp) return;
+
+    /* 3秒ルール: 3秒未満の送信は bot とみなして silent ignore */
+    if (Date.now() - window.__formLoadedAt < 3000) return;
+
+    /* バリデーション */
+    if (!validate()) {
+      /* 最初のエラー項目にスクロール */
+      var firstErr = document.querySelector('.input-error');
+      if (firstErr) {
+        firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
+    /* 送信中 UI */
+    var btn     = document.getElementById('btn-submit');
+    var btnText = document.getElementById('btn-text');
+    btn.disabled = true;
+    btn.classList.add('sending');
+    btnText.textContent = '送信中...';
+
+    /* payload 構築 */
+    var normalize = function (s) { return (s || '').trim().replace(/\s+/g, ' '); };
+    var payload = {
+      uuid:              uuidInput.value,
+      consent:           getRadioValue('consent'),
+      attend:            getRadioValue('attend'),
+      budget:            getRadioValue('budget'),
+      destination:       normalize(destTA.value),
+      name:              normalize(document.getElementById('name').value),
+      affiliation:       normalize(document.getElementById('affiliation').value),
+      family:            getRadioValue('family'),
+      meal_restriction:  normalize(document.getElementById('meal_restriction').value),
+      wishlist:          normalize(document.getElementById('wishlist').value),
+      other:             normalize(document.getElementById('other').value),
+      user_agent:        navigator.userAgent,
+      locale:            navigator.language,
+      referrer:          document.referrer,
+      submit_elapsed_ms: Date.now() - window.__formLoadedAt
+    };
+
+    /* GAS へ送信（hidden iframe + form 方式: CORS/リダイレクト問題を回避） */
+    var iframe = document.getElementById('gas-frame');
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.id = 'gas-frame';
+      iframe.name = 'gas-frame';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+    }
+
+    var tempForm = document.createElement('form');
+    tempForm.method = 'POST';
+    tempForm.action = GAS_URL;
+    tempForm.target = 'gas-frame';
+    tempForm.style.display = 'none';
+
+    Object.keys(payload).forEach(function (key) {
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = String(payload[key]);
+      tempForm.appendChild(input);
+    });
+
+    document.body.appendChild(tempForm);
+    tempForm.submit();
+    tempForm.remove();
+
+    /* 楽観 UI: 送信後に thank-you 表示 */
+    localStorage.removeItem(DRAFT_KEY);
+    localStorage.setItem(DONE_KEY, '1');
+    setTimeout(function () {
+      showThankyou(payload.uuid);
+    }, 1500);
+
+    /* ボタン再有効化（念のため） */
+    setTimeout(function () {
+      btn.disabled = false;
+      btn.classList.remove('sending');
+      btnText.textContent = '回答を送信する';
+    }, 3000);
+  });
+
+  /* ===== Thank-you 画面（<main> 全体を置換） ===== */
+  function showThankyou(uuid) {
+    var main = document.getElementById('main-content');
+    main.innerHTML =
+      '<div class="thankyou-wrap">' +
+        '<h2>ご回答ありがとうございました</h2>' +
+        '<p>結果は医局全体にフィードバックいたします。</p>' +
+        '<p>お忙しい中、ご協力いただきありがとうございます。</p>' +
+        '<span class="thankyou-uuid">回答UUID: ' + escapeHtml(uuid) + '</span>' +
+      '</div>';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* XSS 防止用エスケープ */
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+}());
+</script>
+</body>
+</html>
