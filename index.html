@@ -155,6 +155,43 @@
       color: #1a1a2e;
     }
 
+    /* ===== Checkbox Group (preferred_months) ===== */
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 48px;
+      padding: 8px 14px;
+      border: 1px solid #dce3ec;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+      user-select: none;
+    }
+    .checkbox-label:hover {
+      background: #f4f7fb;
+      border-color: #1b2a4a;
+    }
+    .checkbox-label input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #1b2a4a;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .checkbox-label span {
+      font-size: 0.93rem;
+      color: #1a1a2e;
+    }
+    .cb-full {
+      grid-column: 1 / -1;
+    }
+
     /* ===== Budget hint ===== */
     .budget-hint {
       font-size: 0.8rem;
@@ -209,6 +246,7 @@
       display: block;
     }
     .input-error .radio-label,
+    .input-error .checkbox-label,
     .input-error .text-input,
     .input-error textarea {
       border-color: #cc2222;
@@ -305,8 +343,12 @@
       .form-card {
         padding: 18px 14px;
       }
-      .radio-label {
+      .radio-label,
+      .checkbox-label {
         padding: 8px 10px;
+      }
+      .checkbox-label span {
+        font-size: 0.88rem;
       }
     }
   </style>
@@ -319,7 +361,7 @@
     <p class="subtitle">岩手医科大学泌尿器科学講座</p>
     <p class="description">
       コロナ禍で中断していた医局旅行の再開について、皆様のご意見を伺います。
-      2027年2月・1泊2日での開催を検討中（学会の無い月）。
+      2027年に1泊2日での再開を検討中です。希望時期は本アンケート内でお伺いします。
     </p>
     <p class="notice">
       本アンケートは医局内限定です。回答は Google Sheets に記録されます。お名前・所属は任意です。
@@ -368,7 +410,7 @@
       <div class="form-card" id="field-attend">
         <div class="question-label">
           <span class="badge-required">必須</span>
-          <span>2027年2月・1泊2日での参加可否</span>
+          <span>医局旅行が実施されたら参加できますか？</span>
         </div>
         <div class="radio-group" role="radiogroup" aria-labelledby="label-attend">
           <label class="radio-label">
@@ -380,14 +422,38 @@
             <span>参加できない</span>
           </label>
           <label class="radio-label">
-            <input type="radio" name="attend" value="日程次第">
-            <span>日程次第</span>
+            <input type="radio" name="attend" value="時期次第">
+            <span>時期次第</span>
           </label>
         </div>
         <p class="field-error" id="error-attend">いずれかを選択してください。</p>
       </div>
 
-      <!-- Q3: 希望予算 -->
+      <!-- Q3: 希望時期（複数選択可） -->
+      <div class="form-card" id="field-preferred-months">
+        <div class="question-label">
+          <span class="badge-required">必須</span>
+          <span>希望時期（複数選択可・1泊2日）</span>
+        </div>
+        <div class="checkbox-group" role="group" aria-labelledby="label-preferred-months">
+          <label class="checkbox-label"><input type="checkbox" name="preferred_months" value="1月"><span>1月</span></label>
+          <label class="checkbox-label"><input type="checkbox" name="preferred_months" value="2月"><span>2月</span></label>
+          <label class="checkbox-label"><input type="checkbox" name="preferred_months" value="3月"><span>3月</span></label>
+          <label class="checkbox-label"><input type="checkbox" name="preferred_months" value="4月"><span>4月</span></label>
+          <label class="checkbox-label"><input type="checkbox" name="preferred_months" value="5月"><span>5月</span></label>
+          <label class="checkbox-label"><input type="checkbox" name="preferred_months" value="6月"><span>6月</span></label>
+          <label class="checkbox-label"><input type="checkbox" name="preferred_months" value="7月"><span>7月</span></label>
+          <label class="checkbox-label"><input type="checkbox" name="preferred_months" value="8月"><span>8月</span></label>
+          <label class="checkbox-label"><input type="checkbox" name="preferred_months" value="9月"><span>9月</span></label>
+          <label class="checkbox-label"><input type="checkbox" name="preferred_months" value="10月"><span>10月</span></label>
+          <label class="checkbox-label"><input type="checkbox" name="preferred_months" value="11月"><span>11月</span></label>
+          <label class="checkbox-label"><input type="checkbox" name="preferred_months" value="12月"><span>12月</span></label>
+          <label class="checkbox-label cb-full"><input type="checkbox" name="preferred_months" value="時期は問わない"><span>時期は問わない</span></label>
+        </div>
+        <p class="field-error" id="error-preferred-months">少なくとも1つ選択してください。</p>
+      </div>
+
+      <!-- Q4: 希望予算 -->
       <div class="form-card" id="field-budget">
         <div class="question-label">
           <span class="badge-required">必須</span>
@@ -554,6 +620,11 @@
           els.forEach(function (el) {
             if (el.value === data[k]) el.checked = true;
           });
+        } else if (els[0].type === 'checkbox') {
+          var vals = Array.isArray(data[k]) ? data[k] : [];
+          els.forEach(function (el) {
+            el.checked = vals.indexOf(el.value) !== -1;
+          });
         } else if (els[0].tagName === 'TEXTAREA' || els[0].type === 'text') {
           els[0].value = data[k];
           /* textarea の文字数更新 */
@@ -572,15 +643,20 @@
     var form = document.getElementById('survey-form');
     var out = {};
     var radios = {};
+    var checkboxes = {};
     Array.prototype.forEach.call(form.elements, function (el) {
       if (!el.name || el.name === 'uuid' || el.name === 'website') return;
       if (el.type === 'radio') {
         if (el.checked) radios[el.name] = el.value;
+      } else if (el.type === 'checkbox') {
+        if (!checkboxes[el.name]) checkboxes[el.name] = [];
+        if (el.checked) checkboxes[el.name].push(el.value);
       } else {
         out[el.name] = el.value;
       }
     });
     Object.assign(out, radios);
+    Object.assign(out, checkboxes);
     return out;
   }
 
@@ -591,6 +667,29 @@
   }
 
   document.getElementById('survey-form').addEventListener('input', saveDraft);
+
+  /* ===== preferred_months: 「時期は問わない」と他月の排他制御 ===== */
+  (function () {
+    var monthCBs = document.querySelectorAll('[name="preferred_months"]');
+    var anyCB = null;
+    monthCBs.forEach(function (cb) {
+      if (cb.value === '時期は問わない') anyCB = cb;
+    });
+    if (!anyCB) return;
+    monthCBs.forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        if (cb === anyCB && cb.checked) {
+          /* 「時期は問わない」を選んだら他月を全解除 */
+          monthCBs.forEach(function (other) {
+            if (other !== anyCB) other.checked = false;
+          });
+        } else if (cb !== anyCB && cb.checked) {
+          /* 月を選んだら「時期は問わない」を解除 */
+          anyCB.checked = false;
+        }
+      });
+    });
+  }());
 
   /* ===== destination 文字数カウント ===== */
   var destTA    = document.getElementById('destination');
@@ -605,6 +704,11 @@
   function getRadioValue(name) {
     var checked = document.querySelector('[name="' + name + '"]:checked');
     return checked ? checked.value : '';
+  }
+
+  function getCheckedValues(name) {
+    var nodes = document.querySelectorAll('[name="' + name + '"]:checked');
+    return Array.prototype.map.call(nodes, function (el) { return el.value; });
   }
 
   function setError(fieldId, errorId, show) {
@@ -639,7 +743,15 @@
       setError('field-attend', 'error-attend', false);
     }
 
-    /* Q3 */
+    /* Q3 preferred_months: 最低1つ */
+    if (getCheckedValues('preferred_months').length === 0) {
+      setError('field-preferred-months', 'error-preferred-months', true);
+      hasError = true;
+    } else {
+      setError('field-preferred-months', 'error-preferred-months', false);
+    }
+
+    /* Q4 budget */
     if (!getRadioValue('budget')) {
       setError('field-budget', 'error-budget', true);
       hasError = true;
@@ -647,7 +759,7 @@
       setError('field-budget', 'error-budget', false);
     }
 
-    /* Q4 destination: 空 or 500字超 */
+    /* Q5 destination: 空 or 500字超 */
     var dest = destTA.value.trim().replace(/\s+/g, ' ');
     if (!dest || dest.length > 500) {
       setError('field-destination', 'error-destination', true);
@@ -693,6 +805,7 @@
       uuid:              uuidInput.value,
       consent:           getRadioValue('consent'),
       attend:            getRadioValue('attend'),
+      preferred_months:  getCheckedValues('preferred_months').join(','),
       budget:            getRadioValue('budget'),
       destination:       normalize(destTA.value),
       name:              normalize(document.getElementById('name').value),
